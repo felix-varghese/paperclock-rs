@@ -1,0 +1,4 @@
+# Toolchain (Python, cargo/rustup, ESP-IDF tools) and build output - both
+# multi-GB and machine-specific. See env.ps1.
+/.toolchain
+/.build

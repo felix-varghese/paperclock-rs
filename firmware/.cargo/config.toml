@@ -1,0 +1,27 @@
+[build]
+target = "xtensa-esp32s3-espidf"
+
+[target.'cfg(target_os = "espidf")']
+linker = "ldproxy"
+runner = "espflash flash --monitor"
+rustflags = [ "--cfg",  "espidf_time64"]
+
+[unstable]
+build-std = ["std", "panic_abort"]
+
+[env]
+MCU = "esp32s3"
+ESP_IDF_VERSION = "v5.5.3"
+
+# embuild guesses the workspace by walking up from OUT_DIR, which assumes
+# the target dir sits inside the crate. env.ps1 puts it at the project
+# root instead, one level higher, so the guess lands a directory short and
+# silently misses Cargo.toml's [package.metadata.esp-idf-sys] - which is
+# how the vendored epdiy component gets built. `relative = true` resolves
+# against this file's grandparent, i.e. the crate root.
+CARGO_WORKSPACE_DIR = { value = "", relative = true }
+ESP_IDF_SDKCONFIG_DEFAULTS = { value = "sdkconfig.defaults", relative = true }
+
+# esp-idf-sys refuses to build past a conservative path-length budget
+# meant for systems without NTFS long-path support.
+ESP_IDF_PATH_ISSUES = "warn"
